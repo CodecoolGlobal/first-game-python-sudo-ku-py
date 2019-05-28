@@ -1,10 +1,17 @@
-from sys import argv
 from termcolor import colored
 from copy import deepcopy
 
-rows = 9
-columns = 9
-matrix_basic = [[0 for x in range(columns)] for y in range(rows)]
+'''
+collecting "constant" variables used through this program
+'''
+BOARD_ROWS = 9
+BOARD_COLUMNS = 9
+BOARD_WIDTH = 37
+SQUARES_IN_A_ROW = 3
+SQUARES_IN_A_COLUMN = 3
+
+
+matrix_basic = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
 basic_indices = []
 etalon_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -37,24 +44,24 @@ def read_table_from_file(board_basic, file_name):
                 board_basic[i][j] = int(F.readline())
 
 
-def print_sudoku(board):
-    print("-"*37)
-    for i, row in enumerate(board):
+def print_sudoku(board):  # variable names changed here
+    print("-"*BOARD_WIDTH)
+    for row, rows in enumerate(board):
         coloring_numbers = []
-        for j, x in enumerate(row):
-            if x == 0:
+        for index, numbers in enumerate(rows):
+            if numbers == 0:
                 coloring_numbers.append(" ")
-            elif [i, j] in basic_indices:
-                coloring_numbers.append(colored(x, "red"))
+            elif [row, index] in basic_indices:
+                coloring_numbers.append(colored(numbers, "red"))
             else:
-                coloring_numbers.append(x)
-        print(("|" + " {}   {}   {} |"*3).format(*coloring_numbers))
-        if i == 8:
-            print("-"*37)
-        elif i % 3 == 2:
-            print("|" + "---+"*8 + "---|")
+                coloring_numbers.append(numbers)
+        print(("|" + " {}   {}   {} |"*SQUARES_IN_A_ROW).format(*coloring_numbers))
+        if row == (BOARD_ROWS - 1):
+            print("-"*BOARD_WIDTH)
+        elif row % SQUARES_IN_A_ROW == 2:
+            print("|" + "---+"*(BOARD_COLUMNS - 1) + "---|")
         else:
-            print("|" + "   +"*8 + "   |")
+            print("|" + "   +"*(BOARD_COLUMNS - 1) + "   |")
 
 
 def user_input(board):
@@ -123,7 +130,6 @@ def checking_rows(board):
         temp.sort()
         sorted_temp = temp
         if etalon_list != sorted_temp:
-            print("Sorry, something went wrong here. Try again!")
             return False
     return True
 
@@ -133,20 +139,19 @@ def checking_columns(board):
         temp = []
         for column in range(9):
             temp.append(board[every_column][column])
-            temp.sort()
-            sorted_temp = temp
+        temp.sort()
+        sorted_temp = temp
         if etalon_list != sorted_temp:
-            print("Sorry, something went wrong here. Try again!")
             return False
     return True
 
 
-def checking_one_square(board, X_index, Y_index):
+def checking_one_square(board, X_indices, Y_indices):  # some of the variable names corrected
     temp = []
-    for i in X_index:
-        for j in Y_index:
+    for i in X_indices:
+        for j in Y_indices:
             temp.append(board[i][j])
-    temp.sort()
+    temp.sort()  # indentation corrected
     sorted_temp = temp
     if sorted_temp == etalon_list:
         return True
@@ -154,26 +159,22 @@ def checking_one_square(board, X_index, Y_index):
         return False
 
 
-def checking_squares(board):
-    A_index = [0, 1, 2]
-    B_index = [3, 4, 5]
-    C_index = [6, 7, 8]
-    indices = [A_index, B_index, C_index]
-    for i in indices:
-        for j in indices:
-            if checking_one_square(board, i, j) is False:
-                print("Sorry, something went wrong here. Try again!")
+def checking_squares(board):  # variable names corrected
+    A_indices = [0, 1, 2]
+    B_indices = [3, 4, 5]
+    C_indices = [6, 7, 8]
+    indices = [A_indices, B_indices, C_indices]
+    for index_list_row in indices:
+        for index_list_column in indices:
+            if checking_one_square(board, index_list_row, index_list_column) is False:
                 return False
     return True
 
 
 def checking_solution(board):
     win = 0
-    if not checking_rows(board):
-        return win
-    elif not checking_columns(board):
-        return win
-    elif not checking_squares(board):
+    if not (checking_rows(board) and checking_columns(board) and checking_squares(board)):
+        print("\nSorry, something went wrong here. Try again!")  # all prints from checking solutions is here now
         return win
     else:
         win = 1
@@ -191,7 +192,7 @@ def generating_basic_indicies(board, board_basic, index_list):
 
 def main():
     choose_difficulty()
-    matrix = [[0 for x in range(columns)] for y in range(rows)]
+    matrix = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
     generating_basic_indicies(matrix, matrix_basic, basic_indices)
     while True:
         print_sudoku(matrix_basic)
