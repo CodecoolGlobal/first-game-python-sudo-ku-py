@@ -1,5 +1,6 @@
 from termcolor import colored
 from copy import deepcopy
+from sudoku_generator_0529 import generating_sudoku_grid
 
 '''
 collecting "constant" variables used through this program
@@ -10,24 +11,23 @@ BOARD_WIDTH = 37
 SQUARES_IN_A_ROW = 3
 SQUARES_IN_A_COLUMN = 3
 
-
 matrix_basic = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
 basic_indices = []
 etalon_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-def choose_difficulty():
+def choose_difficulty():  # gets random generated sudoku table
     while True:
         choose_level = input(
             "Please choose difficulty: (e: easy, m: medium, h: hard, d: demo) ")
         if choose_level == "e":
-            read_table_from_file(matrix_basic, "sudoku_easy.txt")
+            generating_sudoku_grid(matrix_basic, 2, checking_is_board_full, etalon_list)
             break
         elif choose_level == "m":
-            read_table_from_file(matrix_basic, "sudoku_inter.txt")
+            generating_sudoku_grid(matrix_basic, 5, checking_is_board_full, etalon_list)
             break
         elif choose_level == "h":
-            read_table_from_file(matrix_basic, "sudoku_hard.txt")
+            generating_sudoku_grid(matrix_basic, 10, checking_is_board_full, etalon_list)
             break
         elif choose_level == "d":
             read_table_from_file(matrix_basic, "sudoku_demo.txt")
@@ -44,7 +44,7 @@ def read_table_from_file(board_basic, file_name):
                 board_basic[i][j] = int(F.readline())
 
 
-def print_sudoku(board):  # variable names changed here
+def print_sudoku(board):
     print("-"*BOARD_WIDTH)
     for row, rows in enumerate(board):
         coloring_numbers = []
@@ -120,8 +120,8 @@ def user_input(board):
 def checking_is_board_full(board):
     for row in board:
         if 0 in row:
-            return True
-    return False
+            return False
+    return True
 
 
 def checking_rows(board):
@@ -146,12 +146,12 @@ def checking_columns(board):
     return True
 
 
-def checking_one_square(board, X_indices, Y_indices):  # some of the variable names corrected
+def checking_one_square(board, X_indices, Y_indices):
     temp = []
     for i in X_indices:
         for j in Y_indices:
             temp.append(board[i][j])
-    temp.sort()  # indentation corrected
+    temp.sort()
     sorted_temp = temp
     if sorted_temp == etalon_list:
         return True
@@ -159,7 +159,7 @@ def checking_one_square(board, X_indices, Y_indices):  # some of the variable na
         return False
 
 
-def checking_squares(board):  # variable names corrected
+def checking_squares(board):
     A_indices = [0, 1, 2]
     B_indices = [3, 4, 5]
     C_indices = [6, 7, 8]
@@ -174,7 +174,7 @@ def checking_squares(board):  # variable names corrected
 def checking_solution(board):
     win = 0
     if not (checking_rows(board) and checking_columns(board) and checking_squares(board)):
-        print("\nSorry, something went wrong here. Try again!")  # all prints from checking solutions is here now
+        print("\nSorry, something went wrong here. Try again!")
         return win
     else:
         win = 1
@@ -197,7 +197,7 @@ def main():
     while True:
         print_sudoku(matrix_basic)
         matrix = deepcopy(matrix_basic)
-        while checking_is_board_full(matrix):
+        while checking_is_board_full(matrix) is False:
             user_input(matrix)
         while True:
             if checking_solution(matrix) == 1:
