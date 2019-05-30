@@ -124,7 +124,6 @@ def choose_difficulty():
     easy_textRect = easy_text.get_rect()
     easy_textRect.center = (easy_button_rect.center[0] + 10, easy_button_rect.center[1])
     screen.blit(easy_text, easy_textRect)
-    print(easy_button_rect.center)
 
     medium_text = font.render("MEDIUM", True, BLACK)
     medium_textRect = medium_text.get_rect()
@@ -422,11 +421,9 @@ def checking_squares(board):
 def checking_solution(board):
     win = 0
     if not (checking_rows(board) and checking_columns(board) and checking_squares(board)):
-        print("\nSorry, something went wrong here. Try again!")
         return win
     else:
         win = 1
-        print('Yay! You won!')
         return win
 
 
@@ -446,7 +443,6 @@ def main():
         matrix = deepcopy(matrix_basic)
         again = [0]
         while again:
-            print(matrix)
             playing_game(matrix_basic, matrix, checking_is_board_full)
             outcome = checking_solution(matrix)
             again[0] = 1
