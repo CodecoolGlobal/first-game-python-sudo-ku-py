@@ -30,7 +30,6 @@ TABLE_RIGHT_UPPER_CORNER = [272, 2]
 LINE_NUMBER = 10
 
 matrix_basic = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
-basic_indices = []
 etalon_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 number_coordinates = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
@@ -427,19 +426,10 @@ def checking_solution(board):
         return win
 
 
-def generating_basic_indicies(board, board_basic, index_list):
-    for i in range(len(board)):
-        for j in range(len(board[i])):
-            if board[i][j] != board_basic[i][j]:
-                index_list.append([i, j])
-    return index_list
-
-
 def main():
     while True:
         choose_difficulty()
         matrix = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
-        generating_basic_indicies(matrix, matrix_basic, basic_indices)
         matrix = deepcopy(matrix_basic)
         again = [0]
         while again:
