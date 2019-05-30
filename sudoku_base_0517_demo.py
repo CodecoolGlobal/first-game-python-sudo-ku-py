@@ -143,8 +143,6 @@ def choose_difficulty():
         clock.tick(10)
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
-                # done = True  # Flag that we are done so we exit this loop
-                # again = False
                 return pygame.display.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -198,7 +196,6 @@ def playing_game(basic_grid, grid, board_full_check_func):
             return pygame.display.quit()
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
-                # done = True  # Flag that we are done so we exit this loop
                 return pygame.display.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
