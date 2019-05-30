@@ -95,11 +95,11 @@ def choose_difficulty():
     easy_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
     pygame.draw.rect(easy_rect, GREEN, easy_rect.get_rect(), 10)
     easy_button_rect = easy_rect.get_rect()
-    
+
     medium_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
     pygame.draw.rect(medium_rect, YELLOW, medium_rect.get_rect(), 10)
     medium_button_rect = medium_rect.get_rect()
-    
+
     hard_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
     pygame.draw.rect(hard_rect, RED, hard_rect.get_rect(), 10)
     hard_button_rect = hard_rect.get_rect()
@@ -117,7 +117,7 @@ def choose_difficulty():
     screen.blit(medium_rect, (0, 67.5, 67.5, 270))
     screen.blit(hard_rect, (0, 135, 67.5, 270))
     screen.blit(demo_rect, (0, 202.5, 67.5, 270))
-    
+
     font = pygame.font.SysFont("Arial", 40)
 
     easy_text = font.render("EASY", True, BLACK)
@@ -141,13 +141,12 @@ def choose_difficulty():
     demo_textRect.center = (demo_button_rect.center[0], demo_button_rect.center[1] + 202.5)
     screen.blit(demo_text, demo_textRect)
     while True:
-        
 
         clock.tick(10)
         for event in pygame.event.get():  # User did something
             if event.type == pygame.QUIT:  # If user clicked close
                 # done = True  # Flag that we are done so we exit this loop
-                #again = False
+                # again = False
                 return pygame.display.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -163,14 +162,13 @@ def choose_difficulty():
                         return False
                     elif pos[0] >= 0 and pos[0] <= 270 and pos[1] >= 202.5 and pos[1] <= 270:
                         read_table_from_file(matrix_basic, "sudoku_demo.txt")
-                        return False    
+                        return False
 
         pygame.display.flip()
 
 
 def playing_game(basic_grid, grid, board_full_check_func):
     selected = False
-    done = False
     indices = []
     key = 0
     pos = (0, 0)
@@ -192,7 +190,7 @@ def playing_game(basic_grid, grid, board_full_check_func):
 
     calculate_number_coordinates(BOARD_COLUMNS, BOARD_ROWS)
 
-    while not done:
+    while True:
 
         # This limits the while loop to a max of 10 times per second.
         # Leave this out and we will use all CPU we can.
@@ -282,6 +280,91 @@ def playing_game(basic_grid, grid, board_full_check_func):
         pygame.display.flip()
 
 
+def choosing_continuation(win_condition, restart):
+    pygame.init()
+
+    choosen = False
+
+    screen = pygame.display.set_mode(SIZE)
+    pygame.display.set_caption('$ sudo ku.py')
+
+    clock = pygame.time.Clock()
+    screen.fill(WHITE)
+    font = pygame.font.SysFont("Arial", 20)
+
+    message_rect = pygame.Surface((270, 135), pygame.SRCALPHA)
+    pygame.draw.rect(message_rect, WHITE, message_rect.get_rect())
+
+    replay_button = pygame.Surface((90, 135), pygame.SRCALPHA)
+    pygame.draw.rect(replay_button, YELLOW, replay_button.get_rect())
+
+    new_game_button = pygame.Surface((90, 135), pygame.SRCALPHA)
+    pygame.draw.rect(new_game_button, GREEN, new_game_button.get_rect())
+
+    quit_button = pygame.Surface((90, 135), pygame.SRCALPHA)
+    pygame.draw.rect(quit_button, RED, quit_button.get_rect())
+
+    win_message = 'You won!'
+    lost_message = 'You lost!'
+    question = 'Do you want to play again?'
+
+    screen.fill(WHITE)
+    screen.blit(message_rect, (0, 0, 135, 270))
+    screen.blit(replay_button, (0, 135, 90, 270))
+    screen.blit(new_game_button, (90, 135, 180, 270))
+    screen.blit(quit_button, (180, 135, 270, 270))
+
+    message_text = (font.render(win_message, True, BLACK) if win_condition == 1 else font.render(lost_message, True, BLACK))
+    message_text_rect = message_text.get_rect()
+    message_text_rect.center = (135, 45)
+    screen.blit(message_text, message_text_rect)
+
+    question_text = (font.render(question, True, BLACK))
+    question_text_rect = question_text.get_rect()
+    question_text_rect.center = (135, 90)
+    screen.blit(question_text, question_text_rect)
+
+    replay_text = font.render('REPLAY', True, BLACK)
+    replay_text_rect = replay_text.get_rect()
+    replay_text_rect.center = (45, 202.5)
+    screen.blit(replay_text, replay_text_rect)
+
+    new_game_text = font.render('NEW', True, BLACK)
+    new_game_text_rect = new_game_text.get_rect()
+    new_game_text_rect.center = (135, 202.5)
+    screen.blit(new_game_text, new_game_text_rect)
+
+    quit_text = font.render('QUIT', True, BLACK)
+    quit_text_rect = quit_text.get_rect()
+    quit_text_rect.center = (225, 202.5)
+    screen.blit(quit_text, quit_text_rect)
+
+    while not choosen:
+
+        clock.tick(10)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.display.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if event.button == 1:
+                    if pos[1] > 135 and pos[0] < 90:
+                        choosen is True
+                        restart[0] = 0
+                        return restart[0]
+                    elif pos[1] > 135 and pos[0] > 90 and pos[0] < 180:
+                        choosen is True
+                        restart[0] = 1
+                        return restart[0]
+                    elif pos[1] > 135 and pos[0] > 180:
+                        choosen is True
+                        restart[0] = 2
+                        return restart[0]
+
+        pygame.display.flip()
+
+
 def checking_is_board_full(board):
     for row in board:
         if 0 in row:
@@ -356,33 +439,25 @@ def generating_basic_indicies(board, board_basic, index_list):
 
 
 def main():
-    choose_difficulty()
-    matrix = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
-    generating_basic_indicies(matrix, matrix_basic, basic_indices)
     while True:
+        choose_difficulty()
+        matrix = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
+        generating_basic_indicies(matrix, matrix_basic, basic_indices)
         matrix = deepcopy(matrix_basic)
-        playing_game(matrix_basic, matrix, checking_is_board_full)
-        while True:
-            if checking_solution(matrix) == 1:
-                new = input("Do you want to play again? y/n ")
-                if new == 'y':
-                    main()
-                elif new == 'n':
-                    break
-                else:
-                    print("Please choose from y and n!")
-                    continue
+        again = [0]
+        while again:
+            print(matrix)
+            playing_game(matrix_basic, matrix, checking_is_board_full)
+            outcome = checking_solution(matrix)
+            again[0] = 1
+            again[0] = choosing_continuation(outcome, again)
+            if again[0] == 0:
+                matrix = deepcopy(matrix_basic)
+                continue
+            elif again[0] == 1:
+                break
             else:
-                new = input("Do you want to try it again? y/n ")
-                if new == 'y':
-                    break
-                elif new == 'n':
-                    break
-                else:
-                    print("Please choose from y and n!")
-                    continue
-        if not new == 'y':
-            break
+                return
 
 
 main()
