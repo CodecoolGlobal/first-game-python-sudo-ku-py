@@ -8,8 +8,11 @@ collecting "constant" variables used through this program
 
 BLACK = (0,   0,   0)
 WHITE = (255, 255, 255, 255)
-GREEN = (0, 255, 0, 100)
+GREEN = (0, 255, 0, 200)
 BLUE = (0, 0, 0, 50)
+RED = (255, 0, 0, 200)
+YELLOW = (255, 255, 0, 200)
+BROWN = (139, 69, 19, 200)
 
 BOARD_ROWS = 9
 BOARD_COLUMNS = 9
@@ -18,12 +21,12 @@ SQUARES_IN_A_ROW = 3
 SQUARES_IN_A_COLUMN = 3
 
 ONE_RECT_SIDE = 30
-SIZE = [290, 290]
+SIZE = [274, 274]
 SIZE_OF_ONE_RECT = (ONE_RECT_SIDE, ONE_RECT_SIDE)
 
-TABLE_LEFT_UPPER_CORNER = [10, 10]
-TABLE_LEFT_UNDER_CORNER = [10, 280]
-TABLE_RIGHT_UPPER_CORNER = [280, 10]
+TABLE_LEFT_UPPER_CORNER = [2, 2]
+TABLE_LEFT_UNDER_CORNER = [2, 272]
+TABLE_RIGHT_UPPER_CORNER = [272, 2]
 LINE_NUMBER = 10
 
 matrix_basic = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
@@ -31,27 +34,6 @@ basic_indices = []
 etalon_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 number_coordinates = [[0 for x in range(BOARD_COLUMNS)] for y in range(BOARD_ROWS)]
-
-
-def choose_difficulty():
-    while True:
-        choose_level = input(
-            "Please choose difficulty: (e: easy, m: medium, h: hard, d: demo) ")
-        if choose_level == "e":
-            generating_sudoku_grid(matrix_basic, 2, checking_is_board_full, etalon_list)
-            break
-        elif choose_level == "m":
-            generating_sudoku_grid(matrix_basic, 5, checking_is_board_full, etalon_list)
-            break
-        elif choose_level == "h":
-            generating_sudoku_grid(matrix_basic, 10, checking_is_board_full, etalon_list)
-            break
-        elif choose_level == "d":
-            read_table_from_file(matrix_basic, "sudoku_demo.txt")
-            break
-        else:
-            print("Please choose from the given levels!")
-            continue
 
 
 def read_table_from_file(board_basic, file_name):
@@ -97,20 +79,99 @@ def print_table(line_number, game_surface):
 
 
 def calculate_number_coordinates(cols, rows):
-    starting_pos_X = -5
+    starting_pos_X = -13
 
     for j in range(cols):
         starting_pos_X += ONE_RECT_SIDE
-        starting_pos_Y = 25
+        starting_pos_Y = 17
         for i in range(rows):
             number_coordinates[i][j] = (starting_pos_X, starting_pos_Y)
             starting_pos_Y += ONE_RECT_SIDE
 
 
+def choose_difficulty():
+    pygame.init()
+
+    easy_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
+    pygame.draw.rect(easy_rect, GREEN, easy_rect.get_rect(), 10)
+    easy_button_rect = easy_rect.get_rect()
+    
+    medium_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
+    pygame.draw.rect(medium_rect, YELLOW, medium_rect.get_rect(), 10)
+    medium_button_rect = medium_rect.get_rect()
+    
+    hard_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
+    pygame.draw.rect(hard_rect, RED, hard_rect.get_rect(), 10)
+    hard_button_rect = hard_rect.get_rect()
+
+    demo_rect = pygame.Surface((270, 67.5), pygame.SRCALPHA)
+    pygame.draw.rect(demo_rect, BROWN, demo_rect.get_rect(), 10)
+    demo_button_rect = demo_rect.get_rect()
+
+    screen = pygame.display.set_mode(SIZE)
+    pygame.display.set_caption('$ sudo ku.py')
+
+    clock = pygame.time.Clock()
+    screen.fill(WHITE)
+    screen.blit(easy_rect, (0, 0, 67.5, 270))
+    screen.blit(medium_rect, (0, 67.5, 67.5, 270))
+    screen.blit(hard_rect, (0, 135, 67.5, 270))
+    screen.blit(demo_rect, (0, 202.5, 67.5, 270))
+    
+    font = pygame.font.SysFont("Arial", 40)
+
+    easy_text = font.render("EASY", True, BLACK)
+    easy_textRect = easy_text.get_rect()
+    easy_textRect.center = (easy_button_rect.center[0] + 10, easy_button_rect.center[1])
+    screen.blit(easy_text, easy_textRect)
+    print(easy_button_rect.center)
+
+    medium_text = font.render("MEDIUM", True, BLACK)
+    medium_textRect = medium_text.get_rect()
+    medium_textRect.center = (medium_button_rect.center[0], medium_button_rect.center[1] + 67.5)
+    screen.blit(medium_text, medium_textRect)
+
+    hard_text = font.render("HARD", True, BLACK)
+    hard_textRect = hard_text.get_rect()
+    hard_textRect.center = (hard_button_rect.center[0], hard_button_rect.center[1] + 135)
+    screen.blit(hard_text, hard_textRect)
+
+    demo_text = font.render("DEMO", True, BLACK)
+    demo_textRect = demo_text.get_rect()
+    demo_textRect.center = (demo_button_rect.center[0], demo_button_rect.center[1] + 202.5)
+    screen.blit(demo_text, demo_textRect)
+    while True:
+        
+
+        clock.tick(10)
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                # done = True  # Flag that we are done so we exit this loop
+                #again = False
+                return pygame.display.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                if event.button == 1:
+                    if pos[0] >= 0 and pos[0] <= 270 and pos[1] >= 0 and pos[1] <= 67.5:
+                        generating_sudoku_grid(matrix_basic, 2, checking_is_board_full, etalon_list)
+                        return False
+                    elif pos[0] >= 0 and pos[0] <= 270 and pos[1] >= 67.5 and pos[1] <= 135:
+                        generating_sudoku_grid(matrix_basic, 5, checking_is_board_full, etalon_list)
+                        return False
+                    elif pos[0] >= 0 and pos[0] <= 270 and pos[1] >= 135 and pos[1] <= 202.5:
+                        generating_sudoku_grid(matrix_basic, 10, checking_is_board_full, etalon_list)
+                        return False
+                    elif pos[0] >= 0 and pos[0] <= 270 and pos[1] >= 202.5 and pos[1] <= 270:
+                        read_table_from_file(matrix_basic, "sudoku_demo.txt")
+                        return False    
+
+        pygame.display.flip()
+
+
 def playing_game(basic_grid, grid, board_full_check_func):
     selected = False
     done = False
-    indices = None
+    indices = []
     key = 0
     pos = (0, 0)
 
