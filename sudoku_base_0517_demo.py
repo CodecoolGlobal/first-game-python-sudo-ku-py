@@ -122,7 +122,7 @@ def choose_difficulty():
 
     easy_text = font.render("EASY", True, BLACK)
     easy_textRect = easy_text.get_rect()
-    easy_textRect.center = (easy_button_rect.center[0] + 10, easy_button_rect.center[1])
+    easy_textRect.center = (easy_button_rect.center[0], easy_button_rect.center[1])
     screen.blit(easy_text, easy_textRect)
 
     medium_text = font.render("MEDIUM", True, BLACK)
